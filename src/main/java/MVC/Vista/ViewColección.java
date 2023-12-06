@@ -28,7 +28,7 @@ public class ViewColección extends javax.swing.JPanel {
 
         jLabel1 = new javax.swing.JLabel();
         jTextFieldTextoColeccion = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        jButtonCambiarColeccion = new javax.swing.JButton();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("Selecciona la colección");
@@ -36,9 +36,9 @@ public class ViewColección extends javax.swing.JPanel {
         jTextFieldTextoColeccion.setText("corpus");
         jTextFieldTextoColeccion.setActionCommand("<Not Set>");
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jButton1.setText("Cambiar");
-        jButton1.setActionCommand("CambiarColeccion");
+        jButtonCambiarColeccion.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jButtonCambiarColeccion.setText("Cambiar");
+        jButtonCambiarColeccion.setActionCommand("CambiarColeccion");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -52,7 +52,7 @@ public class ViewColección extends javax.swing.JPanel {
                         .addGap(37, 37, 37)
                         .addComponent(jLabel1))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonCambiarColeccion, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(74, 74, 74)))
                 .addContainerGap(88, Short.MAX_VALUE))
         );
@@ -64,14 +64,14 @@ public class ViewColección extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(jTextFieldTextoColeccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButtonCambiarColeccion, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(139, 139, 139))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    public javax.swing.JButton jButtonCambiarColeccion;
     private javax.swing.JLabel jLabel1;
     public javax.swing.JTextField jTextFieldTextoColeccion;
     // End of variables declaration//GEN-END:variables

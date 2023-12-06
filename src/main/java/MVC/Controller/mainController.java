@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -69,10 +70,11 @@ public class mainController implements ActionListener {
         vMain.jMenuItem1.addActionListener(this);
         vMain.jMenuItem2.addActionListener(this);
         vMain.jMenuItem3.addActionListener(this);
+        vMain.jMenuItemMostrarEtiquetas.addActionListener(this);
         vMain.jMenuItemSalirBuscador.addActionListener(this);
         vMain.jMenuItemApagarServidor.addActionListener(this);
         vSearch.JBuscarConsulta.addActionListener(this);
-
+        vColeccion.jButtonCambiarColeccion.addActionListener(this);
     }
 
     @Override
@@ -103,16 +105,21 @@ public class mainController implements ActionListener {
 
             }
 
-            case "CambiarColección" -> {
+            case "CambiarColeccion" -> {
                 setCollection();
             }
 
-            case "ApagarServidor"->{
-                 ConsoleCommand.endServer();
+            case "MostrarEtiquetas" -> {
+                JDialog dialogmostrarEtiqueta = new JDialog(vMain, "Etiquetas de búsqueda");
+                String[] etiquetasBuscador = Document.getVariableTagName();
+            }
+
+            case "ApagarServidor" -> {
+                ConsoleCommand.endServer();
             }
             case "Salir" -> {
                 try {
-                   
+
                     client.close();
                     vMain.dispose();
                 } catch (IOException ex) {
@@ -187,6 +194,7 @@ public class mainController implements ActionListener {
     private void setCollection() {
 
         try {
+            System.out.println("Realiza cambiar de coleccion");
             String newCollection = vColeccion.jTextFieldTextoColeccion.getText();
             if (!newCollection.isBlank() && isCollection(newCollection)) {
                 this.collection = newCollection;
@@ -200,32 +208,30 @@ public class mainController implements ActionListener {
     }
 
     /**
-     * Este método realiza la consulta en solr
+     * Este método realiza la consulta en solr y muestra los resultados
+     * obtenidos
      */
     private void doQuery() {
         try {
             String query = setQuerySearch();
             System.out.println(query);
-            
+
             List<Document> docs = responseQuery(query);
             if (!docs.isEmpty()) {
                 ///Mostramos los resultados
                 StringBuilder response = new StringBuilder("<html>");
-                System.out.println("EntraAquí");
                 for (Document doc : docs) {
-                    System.out.println("Respuesta" + doc.toString());
                     response.append(doc.toStringHtml());
                 }
-
                 response.append("</html>");
                 ///Escribe en el textArea
                 vSearch.jTextPaneEscribirConsulta.setText(response.toString());
-
             } else {
                 ViewMenssage.Mensaje("Info", "No se han podido recuperar documentos relevantes");
             }
         } catch (Exception ex) {
             ViewMenssage.Mensaje("error", "Se ha producido un error al realizar la consulta");
+            ex.printStackTrace();
         }
     }
 
@@ -235,25 +241,38 @@ public class mainController implements ActionListener {
      * sobre el texto
      *
      */
-    private String setQuerySearch() throws Exception{
+    private String setQuerySearch() throws Exception {
 
         String newquery = "";
-            String query = vSearch.jTextAreaConsulta.getText();
-            if (query.isBlank()) {
-                newquery = "*:*";
-            } else {
-                newquery = "text_book:".concat(query);
-            }
-            return newquery;
+        String query = vSearch.jTextAreaConsulta.getText();
+        if (query.isBlank()) {
+            newquery = "*:*";
+        } else {
+            newquery = "text_book:".concat(query);
+        }
+        return newquery;
     }
 
+    /**
+     * *
+     * Realizamos la consulta y recuperamos los resultados de la consulta de
+     * manera que resaltamos los resultados obtenidos
+     *
+     * @param q consulta realizada
+     * @return devuelve los documentos encontrados
+     * @throws Exception Se produce un error al realizar la consulta *
+     */
     private List<Document> responseQuery(String q) throws Exception {
         List<Document> resultDocument = new ArrayList<>();
 
+        String text = Document.TEXT_FIELD;
+        String title = Document.TITLE_FIELD;
+
         SolrQuery query = new SolrQuery(q);
         query.setHighlight(true);
-        query.setHighlightRequireFieldMatch(true);
-        query.addHighlightField("text_book");
+        query.setHighlightSnippets(1);
+        query.setParam("hl.fl", "*");
+        query.setParam("hl.frasize", "0");
         query.setHighlightSimplePre("<em><b>");
         query.setHighlightSimplePost("</b></em>");
         QueryResponse rsp = client.query(collection, query);
@@ -263,23 +282,30 @@ public class mainController implements ActionListener {
             Document newDoc = new Document();
 
             newDoc.setIndex(doc.getFieldValue("index").toString());
-            
+
             ///Verificamos que sea una búsqueda Con palabras relevantes
+            String idSolrDocument = doc.getFieldValue("id").toString();
+            Map<String, Map<String, List<String>>> highLightMap = rsp.getHighlighting();
+            Map<String, List<String>> highLightFieldMap = highLightMap.get(idSolrDocument);
+
             try {
-                String idSolrDocument = doc.getFieldValue("id").toString();
-                Map<String, Map<String, List<String>>> highLightMap = rsp.getHighlighting();
-                Map<String, List<String>> highLightFieldMap = highLightMap.get(idSolrDocument);
-                List<String> highList = highLightFieldMap.get("text_book");
+
+                List<String> highList = highLightFieldMap.get(text);
                 newDoc.setText(highList.get(0));
             } catch (Exception e) {
-                newDoc.setText(doc.getFieldValue("text_book").toString());
+                newDoc.setText(doc.getFieldValue(text).toString());
             }
+            try {
 
-            newDoc.setAuthors(doc.getFieldValues("authors").stream()
-                    .map(object -> Objects.toString(object, null))
-                    .collect(Collectors.toList()));
+                List<String> highList = highLightFieldMap.get(title);
+                newDoc.setTitle(highList.get(0));
+            } catch (Exception e) {
+                newDoc.setTitle(doc.getFieldValue(title).toString());
+            }            
+
             resultDocument.add(newDoc);
         }
+
         return resultDocument;
 
     }

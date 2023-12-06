@@ -83,12 +83,14 @@ public class ControladorLogin implements ActionListener {
 
     private void SelectServer() {
         JFileChooser vFile = new JFileChooser();
+        vFile.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int selection = vFile.showOpenDialog(vLogin);
         vFile.setVisible(true);
 
         if (selection == JFileChooser.APPROVE_OPTION) {
             File file = vFile.getSelectedFile();
             if (file.isDirectory()) {
+                System.out.println("Entra aqui");
                 SolrDirection = file.getAbsolutePath();
                 vLogin.jTextFieldUbicacionServidor.setText(SolrDirection);
             } else {

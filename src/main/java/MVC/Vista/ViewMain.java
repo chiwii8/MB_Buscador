@@ -32,6 +32,7 @@ public class ViewMain extends javax.swing.JFrame {
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItemMostrarEtiquetas = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItemSalirBuscador = new javax.swing.JMenuItem();
         jMenuItemApagarServidor = new javax.swing.JMenuItem();
@@ -58,6 +59,15 @@ public class ViewMain extends javax.swing.JFrame {
         jMenuItem3.setText("Consultas");
         jMenuItem3.setActionCommand("ViewAyudaConsultas");
         jMenu2.add(jMenuItem3);
+
+        jMenuItemMostrarEtiquetas.setText("Mostrar Etiquetas");
+        jMenuItemMostrarEtiquetas.setActionCommand("MostrarEtiquetas");
+        jMenuItemMostrarEtiquetas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemMostrarEtiquetasActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItemMostrarEtiquetas);
 
         jMenuBar1.add(jMenu2);
 
@@ -91,6 +101,10 @@ public class ViewMain extends javax.swing.JFrame {
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItemMostrarEtiquetasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemMostrarEtiquetasActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItemMostrarEtiquetasActionPerformed
 
     /**
      * @param args the command line arguments
@@ -143,6 +157,7 @@ public class ViewMain extends javax.swing.JFrame {
     public javax.swing.JMenuItem jMenuItem2;
     public javax.swing.JMenuItem jMenuItem3;
     public javax.swing.JMenuItem jMenuItemApagarServidor;
+    public javax.swing.JMenuItem jMenuItemMostrarEtiquetas;
     public javax.swing.JMenuItem jMenuItemSalirBuscador;
     // End of variables declaration//GEN-END:variables
 }
