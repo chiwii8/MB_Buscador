@@ -17,14 +17,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -45,7 +49,7 @@ public class mainController implements ActionListener {
     private final ViewColección vColeccion = new ViewColección();
     private final ViewAyudaConsultas vAyudaConsulta = new ViewAyudaConsultas();
     private final SolrClient client;
-    private String collection = "corpus";
+    private String collection = "corpusGate";   ///Coleccion por defecto
 
     public mainController(SolrClient client) {
 
@@ -110,8 +114,8 @@ public class mainController implements ActionListener {
             }
 
             case "MostrarEtiquetas" -> {
-                JDialog dialogmostrarEtiqueta = new JDialog(vMain, "Etiquetas de búsqueda");
-                String[] etiquetasBuscador = Document.getVariableTagName();
+                JDialog vEtiquetas = newViewLabels();
+                vEtiquetas.setVisible(true);
             }
 
             case "ApagarServidor" -> {
@@ -198,9 +202,9 @@ public class mainController implements ActionListener {
             String newCollection = vColeccion.jTextFieldTextoColeccion.getText();
             if (!newCollection.isBlank() && isCollection(newCollection)) {
                 this.collection = newCollection;
-                ViewMenssage.Mensaje("info", "Se ha seleccionado una colección válida");
+                ViewMenssage.Mensaje("Info", "Se ha seleccionado una colección válida");
             } else {
-                ViewMenssage.Mensaje("error", "Valor no válido para el texto");
+                ViewMenssage.Mensaje("error", "Coleccion no válida");
             }
         } catch (Exception ex) {
             ViewMenssage.Mensaje("error", "Valor no válido para el texto");
@@ -236,19 +240,71 @@ public class mainController implements ActionListener {
     }
 
     /**
-     * Nos permite seleccionar la query que quiere realizar el usuario. En el
-     * caso de que no se establezca un atributo sobre el que buscar se realizará
-     * sobre el texto
-     *
+     * Nos permite seleccionar la query que quiere realizar el usuario basado en
+     * las reglas especificadas. En el caso de que no se establezca un atributo
+     * sobre el que buscar se realizará sobre el texto.
      */
     private String setQuerySearch() throws Exception {
-
-        String newquery = "";
+        ///Lo transformamos en una lista para trabajar con un stream de datos
+        ///Seguimos haciendo un map y añadiendo a cada etiqueta ':' y devolvemos un array de objetos
+        ///Por lo que es necesario un cast a string del array resultante
+        String[] labels = Arrays.asList(Document.getVariableTagName())
+                .stream().map(label -> label.concat(":"))
+                .toArray(String[]::new);
+        
+        String newquery;
         String query = vSearch.jTextAreaConsulta.getText();
+
+        ///Evaluamos los casos que tenemos consulta
+        ///1º en blanco
         if (query.isBlank()) {
             newquery = "*:*";
-        } else {
-            newquery = "text_book:".concat(query);
+        } else if (!Arrays.asList(labels)
+                .stream()
+                .anyMatch(elemento -> query.contains(elemento))) {  ///Ahora se filtra correctamente
+            
+            newquery = Document.TEXT_FIELD.concat(":").concat(query);
+        } else { ///TODO: hacer que identique el principio y el final de cada cadena de caracteres
+            
+            newquery = query;
+            ///Haciendo uso del ordenamiento de TreeMap por key, no nos preocupamos de ordenarlo
+            Map<Integer, String> mappedLabels = new TreeMap<>();
+            ///Mapeamos las etiquetas que están en la consulta y su posición
+            for (String label : labels) {
+                
+                int index = newquery.indexOf(label);
+
+                if (index != -1) {
+                    String newLabel = label.concat("(");
+                    newquery = newquery.replace(label, newLabel);
+                    ///Se realiza correctamente
+
+                    ///El valor es orientativo, ya que su única funcionalidad es ver el orden de aparición de las etiquetas
+                    ///Por lo que indice inicial nos sirve
+                    mappedLabels.put(index, newLabel);
+                }
+            }
+
+            ///Situamos las etiquetas de cierre
+            Set<Map.Entry<Integer, String>> entrymappedLabels = mappedLabels.entrySet();
+
+            ///Si hay mas de una etiqueta, realizamos un iterator
+            if (entrymappedLabels.size() > 1) {
+                Iterator<Map.Entry<Integer, String>> iteratorEntry = entrymappedLabels.iterator();
+                iteratorEntry.next();   ///No nos interesa la primera etiqueta
+
+                ///Leemos a partir del segundo y le añadimos ) de cierre de la primera consulta
+                while (iteratorEntry.hasNext()) {
+                    Map.Entry<Integer, String> obj = iteratorEntry.next();
+                    String label = obj.getValue();
+                    newquery = newquery.replace(label, ")".concat(label));
+                }
+                ///tras finalizar el iterator, nos falta añadir un ) para cerrar la ultima etiqueta
+                newquery = newquery.concat(")");
+            } else {
+                ///Si solo hay uno solo necesitamos cerrarlo
+                newquery = newquery.concat(")");
+            }
         }
         return newquery;
     }
@@ -267,12 +323,17 @@ public class mainController implements ActionListener {
 
         String text = Document.TEXT_FIELD;
         String title = Document.TITLE_FIELD;
+        String author = Document.AUTHOR_FIELD;
 
         SolrQuery query = new SolrQuery(q);
+        
+        ///Queremos que salte la excepción al parsear
+        int sol = Integer.parseInt(vSearch.jTextFieldnResultados.getText());
         query.setHighlight(true);
         query.setHighlightSnippets(1);
         query.setParam("hl.fl", "*");
         query.setParam("hl.frasize", "0");
+        query.setParam("rows",String.valueOf(sol));
         query.setHighlightSimplePre("<em><b>");
         query.setHighlightSimplePost("</b></em>");
         QueryResponse rsp = client.query(collection, query);
@@ -301,13 +362,40 @@ public class mainController implements ActionListener {
                 newDoc.setTitle(highList.get(0));
             } catch (Exception e) {
                 newDoc.setTitle(doc.getFieldValue(title).toString());
-            }            
+            }
+            newDoc.setAuthors(new HashSet(doc.getFieldValues(author).stream().toList()));
 
             resultDocument.add(newDoc);
         }
 
         return resultDocument;
 
+    }
+
+    /**
+     * Creamos un Jdialog en función de que Atributos tiene Document, por lo que
+     * es posible sustituir document, y evaluarlo con otro document
+     *
+     * @return devuelve un Jdialog con el etiquetado realizado
+     */
+    private JDialog newViewLabels() {
+        JDialog newJdialog = new JDialog(vMain, "Etiquetas\n");
+        newJdialog.setSize(250, 250);
+
+        String[] Variable_Tag = Document.getVariableTagName();
+
+        JTextPane textPane = new JTextPane();
+        textPane.setEditable(false);
+
+        StringBuilder str = new StringBuilder();
+        for (String tag : Variable_Tag) {
+            str.append(tag).append("\n");
+        }
+
+        textPane.setText(str.toString());
+        newJdialog.add(textPane);
+
+        return newJdialog;
     }
 
 }

@@ -22,22 +22,24 @@ public class Document {
 
     ///Campos del bean
     ///Si se requiere modificación, se realiza en este apartado
-    public final static String TEXT_FIELD = "text_book";
     public final static String INDEX_FIELD = "index";
     public final static String TITLE_FIELD = "title";
+    public final static String TEXT_FIELD = "text_book";
+    public final static String AUTHOR_FIELD = "author";
 
     public final static String PERSON_FIELD = "Person";
     public final static String ORGANITATION_FIELD = "Organization";
     public final static String LOCATION_FIELD = "Location";
     public final static String DATE_FIELD = "Date";
-    
-    private final static String VARIABLE_TAG_NAME[] = {TEXT_FIELD,TITLE_FIELD,PERSON_FIELD,ORGANITATION_FIELD,LOCATION_FIELD,DATE_FIELD};
+
+    private final static String VARIABLE_TAG_NAME[] = {TEXT_FIELD, TITLE_FIELD,AUTHOR_FIELD, PERSON_FIELD, ORGANITATION_FIELD, LOCATION_FIELD, DATE_FIELD};
     private final static String DATA_FIELD_ARRAY[] = {PERSON_FIELD, ORGANITATION_FIELD, LOCATION_FIELD, DATE_FIELD};
     ///Variables
     private String index;
     private String title;
     private String boletin;
     private String text;
+    private Set<String> authors;
     ///private List<String> authors; incluida en persons
 
     ///Atributos requeridos por solr después de parsear el Corpus y el CISI.QRY
@@ -52,6 +54,7 @@ public class Document {
         boletin = null;
         text = null;
 
+        authors = new HashSet<>();
         persons = new HashSet<>();
         organitations = new HashSet<>();
         locations = new HashSet<>();
@@ -98,6 +101,15 @@ public class Document {
     @Field(TEXT_FIELD)
     public void setText(String Text) {
         this.text = Text;
+    }
+
+    public Set<String> getAuthors() {
+        return authors;
+    }
+
+    @Field(AUTHOR_FIELD)
+    public void setAuthors(Set<String> authors) {
+        this.authors = authors;
     }
 
     public String getBoletin() {
@@ -274,8 +286,6 @@ public class Document {
             }
             query.append(")\n");
         }*/
-
-        
         if (!dates.isEmpty()) {
             Iterator ite = dates.iterator();
             String aux_date = "\"".concat((String) ite.next()).concat("\"");
@@ -286,7 +296,7 @@ public class Document {
             }
             query.append(")\n");
         }
-        
+
         System.out.println(query.toString());
         return query.toString();
     }
@@ -311,16 +321,16 @@ public class Document {
                     .replaceAll("\\s+", "+");
         }
     }
-    
+
     public String toStringHtml() {
         StringBuilder str = new StringBuilder("<b>Index:</b> ").append(index).append("<br>");
 
         if (title != null) {
             str.append("<b>Title:</b> ").append(title).append("<br>");
         }
-        if (!persons.isEmpty()) {
-            for (String author : persons) {
-                str.append("<b>Person:</b> ").append(author).append("<br>");
+        if (!authors.isEmpty()) {
+            for (String author : authors) {
+                str.append("<b>author:</b> ").append(author).append("<br>");
             }
         }
 

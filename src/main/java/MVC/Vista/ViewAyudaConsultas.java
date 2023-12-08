@@ -33,6 +33,7 @@ public class ViewAyudaConsultas extends javax.swing.JPanel {
         jTextPane1 = new javax.swing.JTextPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextPane2 = new javax.swing.JTextPane();
+        jLabel3 = new javax.swing.JLabel();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("Consultas");
@@ -45,13 +46,16 @@ public class ViewAyudaConsultas extends javax.swing.JPanel {
 
         jTextPane1.setEditable(false);
         jTextPane1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jTextPane1.setText("Es necesario separar las etiquetas con su valor en diferentes lineas\n\ntitle: Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum\ntext_book: Lorem ipsum");
+        jTextPane1.setText("Es preferible separar las etiquetas con su valor en diferentes lineas, para una mayor claridad en la consulta\n\ntitle: Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum\ntext_book: Lorem ipsum");
         jScrollPane1.setViewportView(jTextPane1);
 
         jTextPane2.setEditable(false);
         jTextPane2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jTextPane2.setText("Formas:\n\n   - Lorem ipsum\n   \n   -text: Lorem ipsum");
         jScrollPane2.setViewportView(jTextPane2);
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setText("Si no pones nada en la consulta por defecto es *:*");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -70,9 +74,12 @@ public class ViewAyudaConsultas extends javax.swing.JPanel {
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel6))))
                         .addGap(0, 228, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(15, 15, 15)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(jScrollPane1)
                             .addComponent(jScrollPane2))))
                 .addContainerGap())
@@ -89,8 +96,10 @@ public class ViewAyudaConsultas extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel6)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addContainerGap(81, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -98,6 +107,7 @@ public class ViewAyudaConsultas extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

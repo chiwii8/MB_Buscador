@@ -32,6 +32,10 @@ public class ViewSearch extends javax.swing.JPanel {
         JBuscarConsulta = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextPaneEscribirConsulta = new javax.swing.JTextPane();
+        jTextFieldnResultados = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+
+        setPreferredSize(new java.awt.Dimension(860, 500));
 
         jTextAreaConsulta.setColumns(20);
         jTextAreaConsulta.setRows(5);
@@ -47,8 +51,19 @@ public class ViewSearch extends javax.swing.JPanel {
             }
         });
 
+        jTextPaneEscribirConsulta.setEditable(false);
         jTextPaneEscribirConsulta.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jScrollPane3.setViewportView(jTextPaneEscribirConsulta);
+
+        jTextFieldnResultados.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTextFieldnResultados.setText("10");
+        jTextFieldnResultados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldnResultadosActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Número de resultados");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -59,9 +74,14 @@ public class ViewSearch extends javax.swing.JPanel {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 136, Short.MAX_VALUE)
-                .addComponent(JBuscarConsulta)
-                .addGap(126, 126, 126))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(JBuscarConsulta)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextFieldnResultados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(101, 117, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane3)
@@ -76,10 +96,14 @@ public class ViewSearch extends javax.swing.JPanel {
                         .addComponent(jLabel2))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(36, 36, 36)
-                        .addComponent(JBuscarConsulta)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jTextFieldnResultados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(14, 14, 14)
+                                .addComponent(JBuscarConsulta))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(16, 16, 16)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
                 .addContainerGap())
@@ -90,13 +114,19 @@ public class ViewSearch extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_JBuscarConsultaActionPerformed
 
+    private void jTextFieldnResultadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldnResultadosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldnResultadosActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton JBuscarConsulta;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     public javax.swing.JTextArea jTextAreaConsulta;
+    public javax.swing.JTextField jTextFieldnResultados;
     public javax.swing.JTextPane jTextPaneEscribirConsulta;
     // End of variables declaration//GEN-END:variables
 }
